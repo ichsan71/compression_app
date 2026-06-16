@@ -1,15 +1,38 @@
-# 🗜️ Komparasi Kompresi Citra (Streamlit)
+# Studi Komparasi Algoritma Kompresi Gambar JPEG
 
-Aplikasi web untuk membandingkan hasil kompresi citra: kualitas JPEG pada
-berbagai level, perbandingan antar format (JPEG/PNG/WebP/AVIF), dan mode batch
-untuk banyak gambar. Setiap hasil dievaluasi dengan metrik **ukuran file,
-rasio kompresi, MSE, PSNR,** dan **SSIM**.
+Aplikasi Python (Streamlit) untuk membandingkan tiga algoritma kompresi pada
+file gambar JPEG, sesuai laporan studi komparasi.
+
+## Tiga algoritma
+
+| # | Algoritma | Format Output | Quality |
+|---|-----------|---------------|---------|
+| 1 | JPEG Standard (DCT) | .jpeg | Q=90 (High), optimize |
+| 2 | WebP Modern Codec | .webp | Q=75 (Balanced), method=6 |
+| 3 | JPEG Aggressive (DCT) | .jpeg | Q=50 (Max Compress), optimize |
 
 ## Fitur
 
-- **Kualitas JPEG** — kompres satu gambar pada beberapa level *quality* (10–100), lihat tabel metrik + grafik ukuran/PSNR + pratinjau visual.
-- **Antar Format** — bandingkan JPEG vs PNG vs WebP vs AVIF pada *quality* yang sama.
-- **Batch** — unggah banyak gambar sekaligus, dapatkan tabel agregat, total penghematan, dan ekspor CSV.
+- Antarmuka unggah gambar JPEG (minimal 10 file).
+- Menampilkan gambar beserta ukuran file sebelum dan sesudah kompresi.
+- Persentase pengurangan ukuran (space savings), compression ratio, dan PSNR.
+- Tabel komparasi, grafik batang, tombol unduh hasil, dan ekspor CSV.
+
+## Struktur project
+
+```
+app.py             Aplikasi utama (antarmuka Streamlit)
+compression_lib.py Library 3 algoritma kompresi
+utils.py           Fungsi metrik (ukuran, CR, space savings, PSNR)
+requirements.txt   Dependensi
+```
+
+## Metrik evaluasi
+
+- Ukuran File (KB)
+- Compression Ratio (CR) = Ukuran Asli / Ukuran Terkompresi
+- Space Savings (%) = ((Asli - Terkompresi) / Asli) x 100
+- PSNR (dB) = 10 x log10(MAX^2 / MSE), MAX = 255 (>40 dB Excellent, >30 dB Good)
 
 ## Jalankan lokal
 
@@ -22,46 +45,16 @@ Buka http://localhost:8501
 
 ## Deploy ke Streamlit Community Cloud
 
-1. Buat repository GitHub baru dan push semua file ini:
+1. Push folder ini ke GitHub:
 
    ```bash
    git init
    git add .
-   git commit -m "Komparasi kompresi citra"
+   git commit -m "Studi komparasi kompresi JPEG"
    git branch -M main
    git remote add origin https://github.com/<username>/<repo>.git
    git push -u origin main
    ```
 
-2. Buka <https://share.streamlit.io> → **New app**.
-3. Pilih repo & branch `main`, set **Main file path** ke `app.py`.
-4. Klik **Deploy**. Streamlit Cloud otomatis membaca `requirements.txt`.
-
-## Struktur
-
-```
-.
-├── app.py                  # aplikasi utama
-├── requirements.txt        # dependensi
-├── README.md
-├── .gitignore
-└── .streamlit/config.toml  # tema & batas upload
-```
-
-## Catatan
-
-- **AVIF** hanya aktif jika `pillow-avif-plugin` berhasil terpasang. Jika tidak, format AVIF disembunyikan otomatis.
-- **PNG** bersifat *lossless* sehingga PSNR-nya tak terhingga (∞) — berguna sebagai acuan kualitas maksimum.
-- Batas ukuran unggah diatur di `.streamlit/config.toml` (default 50 MB).
-
-## Algoritma & metrik
-
-| Metrik | Arti | Lebih baik |
-|--------|------|-----------|
-| MSE    | Mean Squared Error antara piksel asli & hasil | kecil |
-| PSNR   | Peak Signal-to-Noise Ratio (dB) | besar |
-| SSIM   | Structural Similarity Index (0–1) | mendekati 1 |
-| Rasio  | ukuran asli ÷ ukuran hasil | besar |
-
-JPEG/WebP/AVIF adalah kompresi *lossy* (berbasis transformasi + kuantisasi),
-sedangkan PNG adalah *lossless* (DEFLATE).
+2. Buka https://share.streamlit.io -> New app.
+3. Pilih repo, branch `main`, main file `app.py`, lalu Deploy.
