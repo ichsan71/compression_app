@@ -19,15 +19,13 @@ from PIL import Image
 from compression_lib import ALGORITMA
 from utils import size_kb, compression_ratio, space_savings, psnr
 
-MIN_FILE = 10
-
 st.set_page_config(page_title="Komparasi Kompresi JPEG", layout="wide")
 
 st.title("Studi Komparasi Algoritma Kompresi Gambar JPEG")
 st.write(
     "Membandingkan tiga algoritma kompresi: "
     "JPEG Standard (Q=90), WebP (Q=75), dan JPEG Aggressive (Q=50). "
-    f"Unggah minimal {MIN_FILE} file gambar JPEG."
+    "Unggah satu atau beberapa file gambar JPEG."
 )
 
 files = st.file_uploader(
@@ -41,13 +39,10 @@ if not files:
     st.stop()
 
 st.write(f"Jumlah file diunggah: {len(files)}")
-if len(files) < MIN_FILE:
-    st.warning(f"Minimal {MIN_FILE} file diperlukan. Saat ini {len(files)} file.")
-    st.stop()
 
 ringkasan = []
 
-for f in files:
+for idx, f in enumerate(files):
     data_asli = f.getvalue()
     img = Image.open(f)
     kb_asli = size_kb(data_asli)
@@ -82,7 +77,7 @@ for f in files:
             st.download_button(
                 "Unduh", data,
                 file_name=f"algo{i}_{f.name.rsplit('.', 1)[0]}.{ext}",
-                key=f"dl_{f.name}_{i}",
+                key=f"dl_{idx}_{i}",
             )
 
         baris[f"Algo {i} (KB)"] = round(kb, 1)
