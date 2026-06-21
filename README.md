@@ -5,15 +5,15 @@ file gambar JPEG, sesuai laporan studi komparasi.
 
 ## Tiga algoritma
 
-| # | Algoritma | Format Output | Quality |
-|---|-----------|---------------|---------|
-| 1 | JPEG Standard (DCT) | .jpeg | Q=90 (High), optimize |
-| 2 | WebP Modern Codec | .webp | Q=75 (Balanced), method=6 |
-| 3 | JPEG Aggressive (DCT) | .jpeg | Q=50 (Max Compress), optimize |
+| # | Algoritma | Format Output | Keterangan |
+|---|-----------|---------------|------------|
+| 1 | Vector Quantization (VQ) | .jpeg | Codebook warna (median cut), 64 codeword |
+| 2 | Block Truncation Coding (BTC) | .jpeg | Blok 4x4, pertahankan mean & std per kanal |
+| 3 | Progressive JPEG Encoding | .jpeg | DCT multi-scan, quality 75 |
 
 ## Fitur
 
-- Antarmuka unggah gambar JPEG (minimal 10 file).
+- Antarmuka unggah gambar JPEG (satu atau banyak file).
 - Menampilkan gambar beserta ukuran file sebelum dan sesudah kompresi.
 - Persentase pengurangan ukuran (space savings), compression ratio, dan PSNR.
 - Tabel komparasi, grafik batang, tombol unduh hasil, dan ekspor CSV.
@@ -22,7 +22,7 @@ file gambar JPEG, sesuai laporan studi komparasi.
 
 ```
 app.py             Aplikasi utama (antarmuka Streamlit)
-compression_lib.py Library 3 algoritma kompresi
+compression_lib.py Library 3 algoritma kompresi (VQ, BTC, Progressive JPEG)
 utils.py           Fungsi metrik (ukuran, CR, space savings, PSNR)
 requirements.txt   Dependensi
 ```

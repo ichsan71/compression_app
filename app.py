@@ -24,8 +24,8 @@ st.set_page_config(page_title="Komparasi Kompresi JPEG", layout="wide")
 st.title("Studi Komparasi Algoritma Kompresi Gambar JPEG")
 st.write(
     "Membandingkan tiga algoritma kompresi: "
-    "JPEG Standard (Q=90), WebP (Q=75), dan JPEG Aggressive (Q=50). "
-    "Unggah satu atau beberapa file gambar JPEG."
+    "Vector Quantization (VQ), Block Truncation Coding (BTC), dan "
+    "Progressive JPEG Encoding. Unggah satu atau beberapa file gambar JPEG."
 )
 
 files = st.file_uploader(
