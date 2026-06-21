@@ -39,7 +39,7 @@ def compress_vq(img: Image.Image, codebook_size: int = 64) -> bytes:
     # quantize() membangun codebook & memetakan piksel ke codeword terdekat (VQ)
     vq = rgb.quantize(colors=codebook_size, method=Image.Quantize.MEDIANCUT)
     rekonstruksi = vq.convert("RGB")
-    return _jpeg_bytes(rekonstruksi, quality=95)
+    return _jpeg_bytes(rekonstruksi, quality=75)
 
 
 # -----------------------------------------------------------------------------
@@ -88,7 +88,7 @@ def compress_btc(img: Image.Image, block: int = 4) -> bytes:
     arr = np.asarray(img.convert("RGB"))
     kanal = [_btc_channel(arr[:, :, c], block) for c in range(3)]
     hasil = np.stack(kanal, axis=2)
-    return _jpeg_bytes(Image.fromarray(hasil), quality=95)
+    return _jpeg_bytes(Image.fromarray(hasil), quality=75)
 
 
 # -----------------------------------------------------------------------------
