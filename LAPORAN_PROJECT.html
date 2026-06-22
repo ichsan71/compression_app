@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Laporan Project - Studi Komparasi Algoritma Kompresi Gambar JPEG</title>
+<style>
+  @page { size: A4; margin: 2.5cm; }
+  body {
+    font-family: "Calibri", "Arial", sans-serif;
+    font-size: 11.5pt; line-height: 1.5; color: #1f2937;
+    max-width: 800px; margin: 0 auto; padding: 24px;
+  }
+  h1 { font-size: 22pt; color: #1e3a8a; text-align: center; margin-bottom: 4px; }
+  h2 { font-size: 15pt; color: #1e3a8a; border-bottom: 2px solid #2563eb;
+       padding-bottom: 4px; margin-top: 28px; }
+  h3 { font-size: 12.5pt; color: #1d4ed8; margin-top: 20px; }
+  h4 { font-size: 11.5pt; color: #374151; margin-top: 14px; margin-bottom: 4px; }
+  .subtitle { text-align: center; color: #2563eb; font-size: 14pt; font-weight: 600; margin-top: 0; }
+  .meta { text-align: center; color: #6b7280; font-size: 10.5pt; margin-bottom: 24px; }
+  .cover { margin: 60px 0 40px; }
+  p { text-align: justify; margin: 8px 0; }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 10.5pt; }
+  th, td { border: 1px solid #cbd5e1; padding: 7px 9px; text-align: left; vertical-align: top; }
+  th { background: #1e3a8a; color: #fff; }
+  tr:nth-child(even) td { background: #f1f5f9; }
+  code, pre { font-family: "Consolas", monospace; font-size: 10pt; }
+  pre { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
+        padding: 12px; overflow-x: auto; white-space: pre-wrap; }
+  .formula { background: #eef2ff; border-left: 4px solid #6366f1;
+             padding: 8px 12px; margin: 8px 0; font-style: italic; }
+  ul, ol { margin: 8px 0 8px 0; padding-left: 26px; }
+  li { margin: 4px 0; }
+  hr { border: none; border-top: 1px solid #e5e7eb; margin: 24px 0; }
+  .center { text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="cover center">
+  <p style="color:#2563eb;font-weight:700;letter-spacing:1px;">LAPORAN PROJECT</p>
+  <h1>Studi Komparasi Algoritma Kompresi Gambar JPEG</h1>
+  <p class="subtitle">Vector Quantization &middot; Block Truncation Coding &middot; Progressive JPEG</p>
+  <p class="meta">
+    Format File: JPEG (.jpeg)<br>
+    Implementasi: Python + Streamlit (deploy via GitHub ke Streamlit Community Cloud)
+  </p>
+</div>
+
+<hr>
+
+<h2>Abstrak</h2>
+<p>Kompresi citra digital bertujuan mengurangi ukuran berkas gambar dengan tetap menjaga kualitas visual pada tingkat yang dapat diterima. Project ini membangun aplikasi berbasis web menggunakan Python dan Streamlit untuk membandingkan tiga algoritma kompresi pada berkas gambar berformat JPEG, yaitu Vector Quantization (VQ), Block Truncation Coding (BTC), dan Progressive JPEG Encoding. Setiap algoritma diukur berdasarkan ukuran berkas, rasio kompresi (Compression Ratio), penghematan ruang (Space Savings), dan kualitas visual melalui Peak Signal-to-Noise Ratio (PSNR). Aplikasi menampilkan gambar beserta ukuran berkas sebelum dan sesudah kompresi sehingga perbedaan ketiga algoritma dapat diamati secara langsung.</p>
+
+<h2>BAB I — Pendahuluan</h2>
+
+<h3>1.1 Latar Belakang</h3>
+<p>Pertumbuhan konten visual pada media sosial, aplikasi mobile, dan layanan cloud menyebabkan kebutuhan penyimpanan dan transmisi gambar yang efisien semakin meningkat. Kompresi citra menjadi teknik fundamental untuk menekan ukuran berkas tanpa menurunkan kualitas secara berlebihan. Terdapat banyak pendekatan kompresi, mulai dari yang berbasis transformasi (seperti DCT pada JPEG), berbasis kuantisasi vektor (Vector Quantization), hingga berbasis blok statistik (Block Truncation Coding).</p>
+<p>Project ini berfokus pada studi komparasi tiga algoritma yang mewakili pendekatan berbeda: VQ yang bekerja pada ruang warna melalui codebook, BTC yang bekerja pada blok piksel dengan mempertahankan momen statistik, dan Progressive JPEG yang merupakan varian penyandian DCT secara bertahap (multi-scan).</p>
+
+<h3>1.2 Rumusan Masalah</h3>
+<ol>
+  <li>Bagaimana cara kerja masing-masing algoritma VQ, BTC, dan Progressive JPEG dalam mengompresi citra?</li>
+  <li>Seberapa besar pengurangan ukuran berkas yang dihasilkan tiap algoritma?</li>
+  <li>Bagaimana pengaruh tiap algoritma terhadap kualitas visual (PSNR)?</li>
+  <li>Algoritma mana yang paling sesuai untuk skenario penggunaan tertentu?</li>
+</ol>
+
+<h3>1.3 Tujuan</h3>
+<ul>
+  <li>Mengimplementasikan tiga algoritma kompresi citra menggunakan Python.</li>
+  <li>Membangun antarmuka grafis (web) untuk memudahkan proses kompresi dan perbandingan hasil.</li>
+  <li>Menganalisis dan membandingkan hasil kompresi pada sejumlah berkas gambar JPEG.</li>
+  <li>Mengukur dan menampilkan ukuran berkas serta persentase pengurangannya.</li>
+</ul>
+
+<h3>1.4 Manfaat</h3>
+<ul>
+  <li>Memahami cara kerja tiga keluarga algoritma kompresi yang berbeda.</li>
+  <li>Menyediakan referensi empiris pemilihan algoritma sesuai kebutuhan.</li>
+  <li>Mengembangkan kemampuan pemrograman Python untuk pengolahan citra.</li>
+</ul>
+
+<h3>1.5 Batasan Masalah</h3>
+<ul>
+  <li>Berkas masukan berupa gambar JPEG (.jpg / .jpeg); seluruh keluaran juga disimpan sebagai JPEG.</li>
+  <li>Algoritma terbatas pada tiga pilihan: VQ, BTC, dan Progressive JPEG.</li>
+  <li>Pengukuran kualitas menggunakan PSNR dan persepsi visual.</li>
+  <li>Implementasi menggunakan pustaka Pillow, NumPy, Pandas, dan Streamlit.</li>
+</ul>
+
+<h2>BAB II — Landasan Teori</h2>
+
+<h3>2.1 Kompresi Citra: Lossy vs Lossless</h3>
+<p>Kompresi citra dibagi menjadi <em>lossless</em> (data dapat dipulihkan sempurna, contoh PNG) dan <em>lossy</em> (sebagian data dibuang demi ukuran lebih kecil, contoh JPEG). Ketiga algoritma pada project ini tergolong <em>lossy</em>: VQ membuang variasi warna halus, BTC membuang variasi intensitas dalam blok, dan Progressive JPEG membuang koefisien frekuensi tinggi melalui kuantisasi DCT.</p>
+
+<h3>2.2 Algoritma 1 — Vector Quantization (VQ)</h3>
+<h4>Konsep</h4>
+<p>Vector Quantization adalah teknik kuantisasi yang memetakan vektor masukan ke sekumpulan vektor representatif (disebut <em>codeword</em>) yang tersimpan dalam sebuah <em>codebook</em>. Alih-alih menyimpan setiap nilai asli, sistem cukup menyimpan indeks <em>codeword</em> terdekat. Pada citra, vektor dapat berupa nilai warna piksel (R, G, B) atau blok kecil piksel.</p>
+<h4>Langkah Kerja (pada ruang warna)</h4>
+<ol>
+  <li><strong>Pembentukan codebook.</strong> Dari seluruh warna piksel pada citra, dipilih sejumlah K warna representatif (misalnya K = 64) menggunakan metode <em>median cut</em>. K menentukan ukuran codebook; makin kecil K, makin agresif kompresinya.</li>
+  <li><strong>Pemetaan (encoding).</strong> Setiap piksel dipetakan ke <em>codeword</em> (warna) terdekat dalam codebook berdasarkan jarak Euclidean pada ruang RGB.</li>
+  <li><strong>Rekonstruksi (decoding).</strong> Citra dibangun ulang dengan mengganti tiap indeks dengan warna <em>codeword</em>-nya.</li>
+</ol>
+<h4>Dasar Matematis</h4>
+<p>Untuk himpunan <em>codeword</em> C = {c&#8321;, c&#8322;, …, c&#8342;}, setiap vektor masukan x dipetakan ke:</p>
+<div class="formula">Q(x) = c&#8323; sedemikian sehingga &#8214;x &minus; c&#8323;&#8214; minimum untuk semua j.</div>
+<p>Tujuan pelatihan codebook adalah meminimalkan distorsi rata-rata D = (1/N) &Sigma; &#8214;x&#7522; &minus; Q(x&#7522;)&#8214;&sup2;. Median cut membagi ruang warna secara rekursif pada sumbu dengan rentang terbesar sehingga tiap partisi memuat jumlah piksel yang seimbang.</p>
+<h4>Karakteristik</h4>
+<p>VQ efektif untuk citra dengan jumlah warna dominan terbatas (ilustrasi, grafis, UI). Efek visual khasnya adalah <em>posterization</em> (gradasi warna menjadi bertingkat) ketika K kecil.</p>
+<p><strong>Parameter implementasi:</strong> codebook_size = 64, metode median cut. Hasil rekonstruksi disimpan sebagai JPEG quality 75.</p>
+
+<h3>2.3 Algoritma 2 — Block Truncation Coding (BTC)</h3>
+<h4>Konsep</h4>
+<p>BTC adalah algoritma kompresi blok yang mempertahankan dua momen statistik tiap blok: rata-rata (<em>mean</em>) dan standar deviasi. Citra dibagi menjadi blok kecil (umumnya 4&times;4 piksel). Setiap blok direpresentasikan oleh dua nilai intensitas (a dan b) serta sebuah <em>bitmap</em> 1-bit yang menandai piksel mana memakai nilai tinggi dan mana memakai nilai rendah.</p>
+<h4>Langkah Kerja (per blok, per kanal warna)</h4>
+<ol>
+  <li><strong>Pembagian blok.</strong> Citra dibagi menjadi blok berukuran n&times;n (n = 4).</li>
+  <li><strong>Hitung statistik blok.</strong> Untuk tiap blok dihitung rata-rata m dan standar deviasi &sigma;.</li>
+  <li><strong>Pembentukan bitmap.</strong> Piksel dengan nilai &ge; m diberi bit 1 (kelompok "tinggi"), sisanya bit 0 (kelompok "rendah"). Misalkan q = jumlah piksel "tinggi" dan p = jumlah piksel "rendah" (p + q = n&sup2;).</li>
+  <li><strong>Hitung dua level rekonstruksi</strong> a dan b sehingga rata-rata dan standar deviasi blok dipertahankan:</li>
+</ol>
+<div class="formula">a = m &minus; &sigma;&middot;&radic;(q/p) &nbsp; (nilai rendah)<br>b = m + &sigma;&middot;&radic;(p/q) &nbsp; (nilai tinggi)</div>
+<ol start="5">
+  <li><strong>Rekonstruksi blok.</strong> Piksel ber-bit 1 diisi nilai b, piksel ber-bit 0 diisi nilai a. Jika blok seragam (p = 0 atau q = 0), seluruh piksel diisi m.</li>
+</ol>
+<h4>Dasar Matematis</h4>
+<p>Pemilihan a dan b di atas merupakan solusi yang menjaga dua persamaan momen blok:</p>
+<div class="formula">p&middot;a + q&middot;b = n&sup2;&middot;m &nbsp; (momen pertama / mean)<br>p&middot;a&sup2; + q&middot;b&sup2; = n&sup2;&middot;(m&sup2; + &sigma;&sup2;) &nbsp; (momen kedua / energi)</div>
+<h4>Karakteristik</h4>
+<p>BTC sangat sederhana dan cepat (tanpa transformasi). Pada blok dengan tepi tajam, hasilnya tetap baik; pada area bergradasi halus, dapat muncul efek blok. Karena tiap blok hanya menyimpan dua level + bitmap, detail intra-blok berkurang. Penerapan per kanal RGB menjaga informasi warna.</p>
+<p><strong>Parameter implementasi:</strong> ukuran blok 4&times;4, diterapkan terpisah pada kanal R, G, dan B. Hasil rekonstruksi disimpan sebagai JPEG quality 75.</p>
+
+<h3>2.4 Algoritma 3 — Progressive JPEG Encoding</h3>
+<h4>Konsep</h4>
+<p>Progressive JPEG adalah varian penyandian standar JPEG. Pipeline dasarnya identik dengan JPEG baseline (konversi warna RGB&rarr;YCbCr, pembagian blok 8&times;8, Discrete Cosine Transform, kuantisasi, dan entropy coding), namun urutan penyandian koefisien berbeda. Pada baseline, tiap blok 8&times;8 dikodekan utuh secara berurutan; pada progressive, koefisien dikodekan dalam beberapa <em>scan</em> bertingkat.</p>
+<h4>Langkah Kerja</h4>
+<ol>
+  <li><strong>Color space conversion.</strong> RGB diubah ke YCbCr untuk memisahkan luminance dan chrominance.</li>
+  <li><strong>Block splitting &amp; DCT.</strong> Citra dibagi blok 8&times;8, tiap blok ditransformasi ke domain frekuensi via DCT.</li>
+  <li><strong>Quantization.</strong> Koefisien DCT dibagi matriks kuantisasi sesuai parameter quality; koefisien frekuensi tinggi banyak dinolkan.</li>
+  <li><strong>Progressive entropy coding (multi-scan).</strong> Koefisien dikodekan secara bertahap, umumnya kombinasi:
+    <ul>
+      <li><em>Spectral selection:</em> koefisien frekuensi rendah dikirim lebih dulu, lalu frekuensi lebih tinggi.</li>
+      <li><em>Successive approximation:</em> bit paling signifikan dikirim lebih dulu, lalu bit-bit penyempurna.</li>
+    </ul>
+  </li>
+</ol>
+<h4>Dasar Matematis (DCT 2D pada blok 8&times;8)</h4>
+<div class="formula">F(u,v) = &frac14;&middot;C(u)&middot;C(v)&middot; &Sigma;<sub>x=0..7</sub> &Sigma;<sub>y=0..7</sub> f(x,y)&middot;cos[((2x+1)u&pi;)/16]&middot;cos[((2y+1)v&pi;)/16]</div>
+<p>dengan C(0) = 1/&radic;2 dan C(k) = 1 untuk k &gt; 0. Kuantisasi: F<sub>q</sub>(u,v) = round(F(u,v) / Q(u,v)), dengan Q(u,v) bergantung pada parameter quality.</p>
+<h4>Karakteristik</h4>
+<p>Progressive JPEG memungkinkan gambar tampil bertahap (buram lalu menajam) saat dimuat — berguna untuk web. Ukuran berkasnya umumnya setara atau sedikit lebih kecil dibanding baseline pada quality yang sama, sambil tetap kompatibel sebagai JPEG.</p>
+<p><strong>Parameter implementasi:</strong> quality 75, mode progressive aktif (<code>progressive=True</code>, <code>optimize=True</code>).</p>
+
+<h3>2.5 Metrik Evaluasi</h3>
+<table>
+  <tr><th>Metrik</th><th>Formula</th><th>Keterangan</th></tr>
+  <tr><td>Ukuran File (KB)</td><td>len(bytes) / 1024</td><td>Ukuran berkas hasil kompresi</td></tr>
+  <tr><td>Compression Ratio (CR)</td><td>Ukuran Asli / Ukuran Terkompresi</td><td>Makin besar makin baik</td></tr>
+  <tr><td>Space Savings (%)</td><td>((Asli &minus; Terkompresi) / Asli) &times; 100</td><td>Persentase pengurangan ukuran</td></tr>
+  <tr><td>PSNR (dB)</td><td>10 &middot; log&#8321;&#8320;(MAX&sup2; / MSE), MAX = 255</td><td>&gt;40 dB Excellent, &gt;30 dB Good</td></tr>
+</table>
+<p>dengan MSE = (1/N) &Sigma; (asli&#7522; &minus; hasil&#7522;)&sup2; dihitung pada seluruh piksel dan kanal.</p>
+<p><strong>Catatan penting tentang ukuran file.</strong> Ukuran berkas JPEG ditentukan oleh parameter <em>quality</em> saat penyimpanan dan kompleksitas citra, bukan semata oleh seberapa "rusak" pikselnya. Karena itu seluruh algoritma menyimpan keluaran pada JPEG quality yang sama (75), sehingga perbedaan ukuran benar-benar mencerminkan efek tiap algoritma terhadap konten citra. Jika berkas asli sudah sangat terkompresi, proses simpan-ulang dapat menambah sedikit overhead — hal ini wajar pada studi re-encoding.</p>
+
+<h2>BAB III — Metodologi</h2>
+<h3>3.1 Alat dan Bahan</h3>
+<p><strong>Perangkat lunak:</strong> Python 3.8+; pustaka Pillow, NumPy, Pandas, Streamlit; browser modern; editor/IDE.</p>
+<p><strong>Dataset:</strong> sejumlah berkas gambar JPEG dengan variasi konten dan resolusi (lanskap, potret, arsitektur, makro, teks/grafis, dll.).</p>
+<h3>3.2 Struktur Direktori Project</h3>
+<pre>kompresi app streamlit/
+&#9500;&#9472; app.py                  # Antarmuka utama (Streamlit)
+&#9500;&#9472; compression_lib.py      # Implementasi 3 algoritma (VQ, BTC, Progressive JPEG)
+&#9500;&#9472; utils.py                # Fungsi metrik (ukuran, CR, space savings, PSNR)
+&#9500;&#9472; requirements.txt        # Dependensi
+&#9500;&#9472; README.md               # Petunjuk jalankan &amp; deploy
+&#9492;&#9472; .streamlit/config.toml  # Tema &amp; batas upload</pre>
+<h3>3.3 Alur Kerja Aplikasi</h3>
+<ol>
+  <li>Pengguna membuka aplikasi melalui browser (Streamlit).</li>
+  <li>Pengguna mengunggah satu atau beberapa berkas gambar JPEG.</li>
+  <li>Sistem membaca gambar dan menampilkan gambar asli beserta ukurannya.</li>
+  <li>Sistem menjalankan tiga algoritma kompresi pada tiap gambar.</li>
+  <li>Hasil ditampilkan berdampingan dengan gambar asli (sebelum vs sesudah).</li>
+  <li>Sistem menghitung ukuran sebelum/sesudah, persentase pengurangan, rasio, dan PSNR.</li>
+  <li>Pengguna dapat melihat tabel komparasi, grafik, dan mengunduh hasil serta laporan CSV.</li>
+</ol>
+
+<h2>BAB IV — Implementasi</h2>
+<h3>4.1 Instalasi Dependencies</h3>
+<pre>pip install -r requirements.txt
+# streamlit, pillow, numpy, pandas</pre>
+<h3>4.2 Implementasi Algoritma — compression_lib.py</h3>
+<h4>Vector Quantization (VQ)</h4>
+<pre>def compress_vq(img, codebook_size=64):
+    rgb = img.convert("RGB")
+    # quantize() membangun codebook &amp; memetakan piksel ke codeword terdekat (VQ)
+    vq = rgb.quantize(colors=codebook_size, method=Image.Quantize.MEDIANCUT)
+    rekonstruksi = vq.convert("RGB")
+    return _jpeg_bytes(rekonstruksi, quality=75)</pre>
+<h4>Block Truncation Coding (BTC)</h4>
+<pre>def _btc_channel(ch, block=4):
+    # pad ke kelipatan block, susun ulang menjadi blok-blok
+    # m = mean blok, sigma = std blok, mask = (piksel &gt;= m)
+    # q = jumlah piksel tinggi, p = jumlah piksel rendah
+    # a = m - sigma*sqrt(q/p); b = m + sigma*sqrt(p/q)
+    # rec = b jika mask else a; blok seragam -&gt; m
+    ...</pre>
+<h4>Progressive JPEG</h4>
+<pre>def compress_progressive(img, quality=75):
+    return _jpeg_bytes(img, quality=quality, progressive=True)</pre>
+<h3>4.3 Implementasi Metrik — utils.py</h3>
+<pre>def psnr(original_img, compressed_bytes):
+    a = np.asarray(original_img.convert("RGB"), float)
+    comp = Image.open(io.BytesIO(compressed_bytes)).convert("RGB")
+    b = np.asarray(comp, float)
+    mse = np.mean((a - b) ** 2)
+    return float("inf") if mse == 0 else 10*np.log10(255.0**2 / mse)</pre>
+<p>Fungsi lain: <code>size_kb</code>, <code>compression_ratio</code>, <code>space_savings</code>.</p>
+<h3>4.4 Antarmuka — app.py</h3>
+<p>Antarmuka dibangun dengan Streamlit, dilengkapi gaya kustom (CSS) berupa header gradien, kartu informasi, dan kartu metrik (ukuran + delta pengurangan). Komponen utama: pengunggah berkas multi-file, tampilan gambar asli dan ketiga hasil secara berdampingan, tabel komparasi, grafik batang rata-rata ukuran dan pengurangan, serta tombol unduh hasil dan laporan CSV.</p>
+
+<h2>BAB V — Hasil dan Pembahasan</h2>
+<h3>5.1 Tabel Hasil Kompresi (template — isi setelah eksperimen)</h3>
+<table>
+  <tr><th>No.</th><th>File</th><th>Asli (KB)</th><th>VQ (KB)</th><th>BTC (KB)</th><th>Progressive (KB)</th><th>Best Algo</th><th>Reduksi terbaik (%)</th></tr>
+  <tr><td>1</td><td>photo_001.jpg</td><td>[...]</td><td>[...]</td><td>[...]</td><td>[...]</td><td>[...]</td><td>[...]</td></tr>
+  <tr><td>2</td><td>photo_002.jpg</td><td>[...]</td><td>[...]</td><td>[...]</td><td>[...]</td><td>[...]</td><td>[...]</td></tr>
+  <tr><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td></tr>
+  <tr><td>10</td><td>photo_010.jpg</td><td>[...]</td><td>[...]</td><td>[...]</td><td>[...]</td><td>[...]</td><td>[...]</td></tr>
+  <tr><td colspan="2"><strong>Rata-rata</strong></td><td>[...]</td><td>[...]</td><td>[...]</td><td>[...]</td><td>—</td><td>[...]</td></tr>
+</table>
+<h3>5.2 Rekapitulasi Performa Algoritma (template)</h3>
+<table>
+  <tr><th>Algoritma</th><th>Avg. Ukuran (KB)</th><th>Avg. Reduksi (%)</th><th>Avg. PSNR (dB)</th><th>Kualitas Visual</th><th>Catatan</th></tr>
+  <tr><td>VQ</td><td>[...]</td><td>[...]</td><td>[...]</td><td>bergantung K</td><td>Posterization pada K kecil</td></tr>
+  <tr><td>BTC</td><td>[...]</td><td>[...]</td><td>[...]</td><td>sedang</td><td>Efek blok di area halus</td></tr>
+  <tr><td>Progressive JPEG</td><td>[...]</td><td>[...]</td><td>[...]</td><td>baik</td><td>Kompatibel web, tampil bertahap</td></tr>
+</table>
+<h3>5.3 Analisis</h3>
+<p><strong>Vector Quantization.</strong> Efektivitas VQ sangat bergantung pada ukuran codebook (K). Pada citra dengan palet warna terbatas (grafis, ilustrasi, UI), VQ menghasilkan pengurangan baik dengan distorsi kecil. Pada foto dengan gradasi kaya, K = 64 dapat memunculkan posterization. PSNR cenderung menurun seiring mengecilnya K.</p>
+<p><strong>Block Truncation Coding.</strong> BTC unggul pada kesederhanaan dan kecepatan. Karena tiap blok hanya menyimpan dua level intensitas, detail tekstur halus dalam blok berkurang dan dapat muncul efek blok pada area bergradasi. Namun tepi/kontras tinggi tetap terjaga relatif baik karena mekanisme dua level mengikuti distribusi intensitas blok.</p>
+<p><strong>Progressive JPEG.</strong> Sebagai turunan JPEG, Progressive memberi keseimbangan kualitas-ukuran yang baik dan kompatibilitas luas. Keunggulan utamanya adalah penyajian bertahap saat pemuatan, cocok untuk web dan koneksi lambat. Ukuran umumnya setara atau sedikit lebih kecil dari baseline pada quality sama.</p>
+
+<h2>BAB VI — Kesimpulan dan Saran</h2>
+<h3>6.1 Kesimpulan</h3>
+<ol>
+  <li>Ketiga algoritma mewakili pendekatan berbeda: VQ (kuantisasi ruang warna via codebook), BTC (statistik blok mean–std), dan Progressive JPEG (penyandian DCT bertahap).</li>
+  <li>Tidak ada algoritma yang unggul mutlak; pemilihan bergantung pada karakteristik citra dan tujuan penggunaan.</li>
+  <li>VQ cocok untuk citra berpalet terbatas; BTC cocok ketika kecepatan dan kesederhanaan diutamakan; Progressive JPEG cocok untuk distribusi web yang menuntut kompatibilitas dan pemuatan bertahap.</li>
+  <li>Aplikasi Python–Streamlit berhasil mengotomatiskan proses kompresi, perhitungan metrik, dan visualisasi hasil secara interaktif.</li>
+</ol>
+<h3>6.2 Saran</h3>
+<ol>
+  <li>Menambah metrik kualitas perseptual seperti SSIM/MS-SSIM untuk gambaran kualitas yang lebih akurat.</li>
+  <li>Menyediakan parameter yang dapat diatur pengguna (ukuran codebook VQ, ukuran blok BTC, quality JPEG) untuk eksperimen trade-off.</li>
+  <li>Memperluas dataset dan menambah algoritma pembanding (mis. JPEG2000, WebP, AVIF).</li>
+  <li>Mengembangkan rekomendasi otomatis algoritma terbaik berdasarkan konten citra.</li>
+</ol>
+
+<h2>Daftar Pustaka</h2>
+<ol>
+  <li>Wallace, G. K. (1991). <em>The JPEG still picture compression standard.</em> Communications of the ACM, 34(4), 30–44.</li>
+  <li>Gray, R. M. (1984). <em>Vector Quantization.</em> IEEE ASSP Magazine, 1(2), 4–29.</li>
+  <li>Delp, E. J., &amp; Mitchell, O. R. (1979). <em>Image compression using Block Truncation Coding.</em> IEEE Transactions on Communications, 27(9), 1335–1342.</li>
+  <li>Sayood, K. (2017). <em>Introduction to Data Compression</em> (5th ed.). Morgan Kaufmann.</li>
+  <li>Salomon, D. (2007). <em>Data Compression: The Complete Reference</em> (4th ed.). Springer.</li>
+  <li>Pillow Development Team. (2023). <em>Pillow Documentation — Image File Formats.</em> https://pillow.readthedocs.io</li>
+  <li>Streamlit Inc. (2023). <em>Streamlit Documentation.</em> https://docs.streamlit.io</li>
+</ol>
+
+<hr>
+<p class="center" style="color:#6b7280;">— Akhir Laporan —</p>
+
+</body>
+</html>
